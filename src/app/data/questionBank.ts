@@ -11,7 +11,7 @@ export interface Question {
 
 export const QUESTION_BANK: Question[] = [
   // =========================================================================
-  // DROP 01 (WEEK 1) - STC GOVERNANCE & EXECUTION FOUNDATIONS (20-60-20)
+  // WEEK 01 QUICKFIRE - STC GOVERNANCE & EXECUTION FOUNDATIONS (20-60-20)
   // =========================================================================
 
   // --- Foundational (2 Questions - 20%) ---
@@ -28,7 +28,7 @@ export const QUESTION_BANK: Question[] = [
       "New members must spend two full years observing before touching group assets"
     ],
     correctIndex: 0,
-    explanation: "Article 4.1 sets the rule: The ROSCA + EEF Core is our mandatory foundation[cite: 6]. The Investment Unit is an opt-in vehicle for members ready to lock in long-term capital under the IPS[cite: 6, 17]. We build discipline together first; we compound wealth by choice[cite: 4, 5]."
+    explanation: "Article 4.1 sets the rule: The ROSCA + EEF Core is our mandatory foundation. The Investment Unit is an opt-in vehicle for members ready to lock in long-term capital under the IPS. We build discipline together first; we compound wealth by choice."
   },
   {
     id: "d1-q2",
@@ -60,7 +60,7 @@ export const QUESTION_BANK: Question[] = [
       "KES 15,000 (standard payout with a delayed balance)"
     ],
     correctIndex: 1,
-    explanation: "The ROSCA payout formula is (Total Members - 1) × Contribution[cite: 5]. Payout recipients are exempt from contributing during their payout month[cite: 5]. That is KES 18,000 of clean, zero-interest lump-sum capital hitting your account on the 27th[cite: 5]."
+    explanation: "The ROSCA payout formula is (Total Members - 1) × Contribution. Payout recipients are exempt from contributing during their payout month. That is KES 18,000 of clean, zero-interest lump-sum capital hitting your account on the 27th."
   },
   {
     id: "d1-q4",
@@ -75,7 +75,7 @@ export const QUESTION_BANK: Question[] = [
       "KES 2,500"
     ],
     correctIndex: 2,
-    explanation: "Members originally funded KES 1,400 per seat in Cycle 3[cite: 7]. The KES 600 top-up brings every member's permanent reserve stake to KES 2,000[cite: 7]. Sizing the safety net appropriately keeps the group calm so no single personal shock derails someone else's payout[cite: 7, 19]."
+    explanation: "Members originally funded KES 1,400 per seat in Cycle 3. The KES 600 top-up brings every member's permanent reserve stake to KES 2,000. Sizing the safety net appropriately keeps the group calm so no single personal shock derails someone else's payout."
   },
   {
     id: "d1-q5",
@@ -90,7 +90,7 @@ export const QUESTION_BANK: Question[] = [
       "Quietly exiting the group chat until the cycle resets"
     ],
     correctIndex: 1,
-    explanation: "Tier 1 is automatic coverage[cite: 7]; Tier 2 requires speaking directly to the EEF Lead prior to the due date. Tier 3 requires two members to put their personal trust on the line to vouch for you. Accountability is the social fabric that keeps the EEF solvent."
+    explanation: "Tier 1 is automatic coverage; Tier 2 requires speaking directly to the EEF Lead prior to the due date. Tier 3 requires two members to put their personal trust on the line to vouch for you. Accountability is the social fabric that keeps the EEF solvent."
   },
   {
     id: "d1-q6",
@@ -105,7 +105,7 @@ export const QUESTION_BANK: Question[] = [
       "Exactly 30 days, no exceptions"
     ],
     correctIndex: 1,
-    explanation: "Article 5.1(c) sets the standard reimbursement window at 14 days[cite: 7]. If you communicate in advance, you can extend up to 28 days total[cite: 7]. Ghosting the deadline triggers a KES 200 fine and marks your record[cite: 7], which jeopardizes your Guarantor Status[cite: 6]."
+    explanation: "Article 5.1(c) sets the standard reimbursement window at 14 days. If you communicate in advance, you can extend up to 28 days total. Ghosting the deadline triggers a KES 200 fine and marks your record, which jeopardizes your Guarantor Status."
   },
   {
     id: "d1-q7",
@@ -152,7 +152,7 @@ export const QUESTION_BANK: Question[] = [
       "The unit price drops so new members can enter at a discount"
     ],
     correctIndex: 0,
-    explanation: "Unit Price = NAV / Units in Circulation[cite: 4]. Cash dividends increase the numerator without expanding the denominator, raising the value of every existing unit[cite: 4]. This is how a unitized system ensures compounding benefits existing holders without messy manual calculations[cite: 4, 13]."
+    explanation: "Unit Price = NAV / Units in Circulation. Cash dividends increase the numerator without expanding the denominator, raising the value of every existing unit. This is how a unitized system ensures compounding benefits existing holders without messy manual calculations."
   },
   {
     id: "d1-q10",
@@ -167,11 +167,11 @@ export const QUESTION_BANK: Question[] = [
       "Because borrower interest must legally be forfeited to charity after 12 months"
     ],
     correctIndex: 0,
-    explanation: "Section 1 of the MLP Capital Allocation Policy highlights opportunity cost: an idle lending pool earns 0%[cite: 11]. After reserving Tier 1 (Capital Buffer) and Tier 2 (Growth Capital), Tier 3 surplus is redeployed into yield-generating portfolio assets (MMF/FIF) so idle money never sleeps[cite: 11]."
+    explanation: "Section 1 of the MLP Capital Allocation Policy highlights opportunity cost: an idle lending pool earns 0%. After reserving Tier 1 (Capital Buffer) and Tier 2 (Growth Capital), Tier 3 surplus is redeployed into yield-generating portfolio assets (MMF/FIF) so idle money never sleeps."
   },
 
   // =========================================================================
-  // DROP 02 (WEEK 2) - DEBT, LIQUIDITY & CASH FLOW (20-60-20)
+  // WEEK 02 QUICKFIRE - DEBT, LIQUIDITY & CASH FLOW (20-60-20)
   // =========================================================================
 
   // --- Foundational (2 Questions - 20%) ---
@@ -188,7 +188,7 @@ export const QUESTION_BANK: Question[] = [
       "An emergency fund is shared by a group, while a sinking fund is strictly personal"
     ],
     correctIndex: 1,
-    explanation: "Emergency funds protect against unexpected shocks (medical events, sudden income disruption)[cite: 8]. Sinking funds smooth out predictable lumpy expenses across monthly cash flows so you don't raid your emergency reserves[cite: 8]."
+    explanation: "Emergency funds protect against unexpected shocks (medical events, sudden income disruption). Sinking funds smooth out predictable lumpy expenses across monthly cash flows so you don't raid your emergency reserves."
   },
   {
     id: "d2-q2",
@@ -220,7 +220,7 @@ export const QUESTION_BANK: Question[] = [
       "They must have won the ROSCA payout within the last 14 days"
     ],
     correctIndex: 1,
-    explanation: "Article 4.3 requires at least 6 months of active membership in the Investment Unit and proof of financial discipline—either completing a full ROSCA cycle or 2 months of an active cycle with a vetted guarantor[cite: 3]."
+    explanation: "Article 4.3 requires at least 6 months of active membership in the Investment Unit and proof of financial discipline—either completing a full ROSCA cycle or 2 months of an active cycle with a vetted guarantor."
   },
   {
     id: "d2-q4",
@@ -235,7 +235,7 @@ export const QUESTION_BANK: Question[] = [
       "KES 12,500"
     ],
     correctIndex: 2,
-    explanation: "Under the MLP terms (reflected in Tip 2.1), a 12.5% annualized interest rate across a 2-month horizon results in approximately KES 208 in interest charges (KES 10,000 × 12.5% × 2/12)[cite: 3, 8], bringing the total due to ~KES 10,208[cite: 8]."
+    explanation: "Under the MLP terms, a 12.5% annualized interest rate across a 2-month horizon results in approximately KES 208 in interest charges (KES 10,000 × 12.5% × 2/12), bringing the total due to ~KES 10,208."
   },
   {
     id: "d2-q5",
@@ -250,7 +250,7 @@ export const QUESTION_BANK: Question[] = [
       "The entire Investment Unit is permanently dissolved"
     ],
     correctIndex: 1,
-    explanation: "Article 4.8 removes emotional drama[cite: 3]. After a 3-day notice and 14 days of default, members vote on one of three clear remedies: an extension plan, liquidating the member's unit holdings, or writing off the debt[cite: 3]."
+    explanation: "Article 4.8 removes emotional drama. After a 3-day notice and 14 days of default, members vote on one of three clear remedies: an extension plan, liquidating the member's unit holdings, or writing off the debt."
   },
   {
     id: "d2-q6",
@@ -265,7 +265,7 @@ export const QUESTION_BANK: Question[] = [
       "4% APR"
     ],
     correctIndex: 2,
-    explanation: "A fee of 8% charged for just one single month translates to a simple annualized rate of 8% × 12 months = 96% APR (and well over 150% if compounded). Flat monthly fees are how micro-lenders disguise predatory interest rates[cite: 8]."
+    explanation: "A fee of 8% charged for just one single month translates to a simple annualized rate of 8% × 12 months = 96% APR (and well over 150% if compounded). Flat monthly fees are how micro-lenders disguise predatory interest rates."
   },
   {
     id: "d2-q7",
@@ -280,7 +280,7 @@ export const QUESTION_BANK: Question[] = [
       "To double your annual tax-free interest allowance"
     ],
     correctIndex: 1,
-    explanation: "Separating emergency cash creates psychological and operational friction[cite: 8]. If emergency funds sit in your daily transactional wallet, routine spending gradually consumes your safety buffer[cite: 8]."
+    explanation: "Separating emergency cash creates psychological and operational friction. If emergency funds sit in your daily transactional wallet, routine spending gradually consumes your safety buffer."
   },
   {
     id: "d2-q8",
@@ -295,7 +295,7 @@ export const QUESTION_BANK: Question[] = [
       "Borrow from predatory mobile loan apps on the 26th"
     ],
     correctIndex: 1,
-    explanation: "Cash flow mismatches cause preventable stress[cite: 8]. Building a one-month income buffer breaks the paycheck-to-paycheck cycle, allowing commitments due on the 27th to be settled comfortably from existing reserves[cite: 5, 8]."
+    explanation: "Cash flow mismatches cause preventable stress. Building a one-month income buffer breaks the paycheck-to-paycheck cycle, allowing commitments due on the 27th to be settled comfortably from existing reserves."
   },
 
   // --- Strategic Edge (2 Questions - 20%) ---
@@ -312,7 +312,7 @@ export const QUESTION_BANK: Question[] = [
       "The guarantor's liability is capped at KES 500"
     ],
     correctIndex: 2,
-    explanation: "Article 4.6(c) states that by guaranteeing a loan, the member assumes personal and financial responsibility for the full outstanding balance and accrued interest[cite: 3]. It is a real financial exposure, which is why guarantor trust is treated as sacred[cite: 8]."
+    explanation: "Article 4.6(c) states that by guaranteeing a loan, the member assumes personal and financial responsibility for the full outstanding balance and accrued interest. It is a real financial exposure, which is why guarantor trust is treated as sacred."
   },
   {
     id: "d2-q10",
@@ -327,7 +327,7 @@ export const QUESTION_BANK: Question[] = [
       "Take another digital loan at 15% to pay off the 3% monthly loan"
     ],
     correctIndex: 1,
-    explanation: "Earning 12% a year while paying ~36% simple APR (3% monthly) creates an annual net loss of 24% on that capital. Paying off high-interest debt provides a guaranteed, risk-free return equal to the interest rate avoided[cite: 8]."
+    explanation: "Earning 12% a year while paying ~36% simple APR (3% monthly) creates an annual net loss of 24% on that capital. Paying off high-interest debt provides a guaranteed, risk-free return equal to the interest rate avoided."
   }
 ];
 
