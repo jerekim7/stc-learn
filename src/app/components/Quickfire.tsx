@@ -40,7 +40,7 @@ const STC_MEMBERS = [
   "Michael Trevis",
   "Ryan Ngetich",
   "Sammy Kimaiyo",
-  "Guest / External Tester"
+  "Guest"
 ];
 
 interface StoredSession {
