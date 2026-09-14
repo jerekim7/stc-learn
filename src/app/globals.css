@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --color-stc-navy: #1C2751;
+  --color-stc-gold: #B09B79;
+  --color-stc-beige: #E8E7E2;
+  --color-stc-gray: #B9B9B9;
+  --color-stc-card: #F4F3EF;
+
+  --font-heading: "Montserrat", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
