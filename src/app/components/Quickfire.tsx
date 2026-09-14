@@ -255,7 +255,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
   const mainText = isDark ? "#F3F4F6" : "#1C2751";
   const mutedText = isDark ? "#94A3B8" : "rgba(28,39,81,0.65)";
 
-  // 1. UNTIMED REVIEW MODE (WITH HIGH-CONTRAST LIGHT/DARK ADAPTATION)
+  // 1. UNTIMED REVIEW MODE
   if (isReviewMode) {
     const answersToDisplay = historicalSession?.userAnswers || userAnswers;
 
@@ -324,11 +324,10 @@ export default function Quickfire({ isDark }: QuickfireProps) {
                   )}
                 </div>
 
-                <p className="text-xs sm:text-sm font-heading font-semibold leading-snug" style={{ color: mainText }}>
+                <p className="text-[14px] font-heading font-medium leading-relaxed" style={{ color: mainText }}>
                   {q.prompt}
                 </p>
 
-                {/* Choices: High Contrast in both modes */}
                 <div className="space-y-2 pt-1 font-body">
                   {!isCorrect && !wasTimedOut && (
                     <div
@@ -367,7 +366,6 @@ export default function Quickfire({ isDark }: QuickfireProps) {
                   </div>
                 </div>
 
-                {/* Takeaway Box */}
                 <div
                   className="rounded-lg p-3 border"
                   style={{
@@ -448,7 +446,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
         >
           <div className="flex items-start gap-3">
             <span
-              className="h-5 w-5 rounded-full text-xs font-heading font-bold flex items-center justify-center shrink-0 mt-0.5"
+              className="h-5 w-5 rounded-full text-xs font-number font-bold flex items-center justify-center shrink-0 mt-0.5"
               style={{ backgroundColor: "rgba(176,155,121,0.15)", color: "#B09B79" }}
             >
               1
@@ -459,7 +457,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
           </div>
           <div className="flex items-start gap-3">
             <span
-              className="h-5 w-5 rounded-full text-xs font-heading font-bold flex items-center justify-center shrink-0 mt-0.5"
+              className="h-5 w-5 rounded-full text-xs font-number font-bold flex items-center justify-center shrink-0 mt-0.5"
               style={{ backgroundColor: "rgba(176,155,121,0.15)", color: "#B09B79" }}
             >
               2
@@ -470,7 +468,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
           </div>
           <div className="flex items-start gap-3">
             <span
-              className="h-5 w-5 rounded-full text-xs font-heading font-bold flex items-center justify-center shrink-0 mt-0.5"
+              className="h-5 w-5 rounded-full text-xs font-number font-bold flex items-center justify-center shrink-0 mt-0.5"
               style={{ backgroundColor: "rgba(176,155,121,0.15)", color: "#B09B79" }}
             >
               3
@@ -522,7 +520,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
           <p className="text-[11px] font-heading font-semibold tracking-wider uppercase" style={{ color: mutedText }}>
             Total Score
           </p>
-          <p className="text-5xl font-heading font-bold mt-1" style={{ color: mainText }}>
+          <p className="text-5xl font-number font-bold mt-1" style={{ color: mainText }}>
             {score}
           </p>
 
@@ -531,7 +529,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
               <p className="text-[10px] font-heading uppercase font-semibold tracking-wider" style={{ color: mutedText }}>
                 Accuracy
               </p>
-              <p className="text-lg font-bold font-heading mt-0.5" style={{ color: mainText }}>
+              <p className="text-lg font-number font-bold mt-0.5" style={{ color: mainText }}>
                 {correctCount} / {questions.length}
               </p>
             </div>
@@ -539,7 +537,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
               <p className="text-[10px] font-heading uppercase font-semibold tracking-wider" style={{ color: mutedText }}>
                 Avg Pace
               </p>
-              <p className="text-lg font-bold font-heading mt-0.5" style={{ color: mainText }}>
+              <p className="text-lg font-number font-bold mt-0.5" style={{ color: mainText }}>
                 {avgPace}s
               </p>
             </div>
@@ -623,7 +621,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
     );
   }
 
-  // 4. ACTIVE TIMED QUIZ
+  // 4. ACTIVE TIMED QUIZ (OPTIMIZED SCALE & WEIGHT)
   return (
     <div
       className="rounded-2xl p-5 sm:p-8 max-w-lg w-full shadow-sm border transition-colors"
@@ -669,20 +667,20 @@ export default function Quickfire({ isDark }: QuickfireProps) {
 
       {/* Meta Bar */}
       <div
-        className="flex items-center justify-between border-b pb-3 mb-5"
+        className="flex items-center justify-between border-b pb-3 mb-4"
         style={{ borderColor: cardBorder }}
       >
-        <span className="text-xs uppercase tracking-wider font-semibold font-heading" style={{ color: "#B09B79" }}>
+        <span className="text-[11px] uppercase tracking-wider font-bold font-heading" style={{ color: "#B09B79" }}>
           {currentQ.category}
         </span>
         <div className="flex items-center gap-1.5 font-heading">
           <Clock
-            size={15}
+            size={14}
             className={timeLeft <= 8 ? "text-red-500 animate-pulse" : ""}
             style={{ color: timeLeft > 8 ? mutedText : undefined }}
           />
           <p
-            className={`text-base font-bold ${
+            className={`text-sm font-number font-bold ${
               timeLeft <= 8 ? "text-red-500 animate-pulse" : ""
             }`}
             style={{ color: timeLeft > 8 ? mainText : undefined }}
@@ -692,12 +690,15 @@ export default function Quickfire({ isDark }: QuickfireProps) {
         </div>
       </div>
 
-      {/* Scenario Prompt */}
-      <h3 className="text-base sm:text-lg font-heading font-semibold leading-snug mb-5" style={{ color: mainText }}>
+      {/* Calibrated Scenario Prompt (15px Medium with relaxed leading) */}
+      <h3
+        className="text-[15px] sm:text-[16px] font-heading font-medium leading-relaxed mb-5"
+        style={{ color: mainText }}
+      >
         {currentQ.prompt}
       </h3>
 
-      {/* Options */}
+      {/* Calibrated Options (14px Medium with balanced padding) */}
       <div className="space-y-2.5 mb-5 font-body">
         {currentQ.options.map((option, idx) => {
           let optionBg = innerCardBg;
@@ -723,7 +724,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
               key={idx}
               disabled={isAnswered}
               onClick={() => handleSelect(idx)}
-              className="w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm transition flex items-center justify-between"
+              className="w-full text-left p-3.5 rounded-xl border text-sm font-medium transition flex items-center justify-between"
               style={{
                 backgroundColor: optionBg,
                 borderColor: optionBorder,
@@ -751,7 +752,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
             borderColor: cardBorder
           }}
         >
-          <p className="text-[11px] font-heading uppercase tracking-wide font-bold mb-1" style={{ color: "#B09B79" }}>
+          <p className="text-[10px] font-heading uppercase tracking-wider font-bold mb-1" style={{ color: "#B09B79" }}>
             The Takeaway
           </p>
           <p className="text-xs sm:text-sm leading-relaxed font-body" style={{ color: mainText }}>
@@ -760,7 +761,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
         </div>
       )}
 
-      {/* Next Trigger */}
+      {/* Next Action */}
       {isAnswered && (
         <button
           onClick={handleNext}

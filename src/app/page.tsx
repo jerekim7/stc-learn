@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Quickfire from "./components/Quickfire";
+import { Contrast } from "lucide-react";
 
 export default function Home() {
   const [isDark, setIsDark] = useState(false);
@@ -18,8 +19,8 @@ export default function Home() {
     }
   }, []);
 
-  const toggleTheme = (mode: "light" | "dark") => {
-    const nextDark = mode === "dark";
+  const toggleTheme = () => {
+    const nextDark = !isDark;
     setIsDark(nextDark);
     localStorage.setItem("stc_theme", nextDark ? "dark" : "light");
   };
@@ -31,73 +32,51 @@ export default function Home() {
       <main
         className="min-h-screen flex flex-col items-center justify-between p-4 sm:p-8 font-body transition-colors duration-200"
         style={{
-          backgroundColor: isDark ? "#121933" : "#F4F1EA",
+          backgroundColor: isDark ? "#121933" : "#E8E7E2",
           color: isDark ? "#F3F4F6" : "#1C2751"
         }}
       >
         {/* Brand Header */}
         <header
           className="w-full max-w-lg flex items-center justify-between py-3 border-b"
-          style={{ borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(28,39,81,0.12)" }}
+          style={{ borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(28,39,81,0.15)" }}
         >
           <div>
             <h1
-              className="text-lg sm:text-xl font-heading font-bold tracking-tight"
+              className="text-lg sm:text-xl font-brand font-bold tracking-tight"
               style={{ color: isDark ? "#F3F4F6" : "#1C2751" }}
             >
               STC Learn
             </h1>
             <p
               className="text-[11px] font-body"
-              style={{ color: isDark ? "#94A3B8" : "rgba(28,39,81,0.6)" }}
+              style={{ color: isDark ? "#94A3B8" : "rgba(28,39,81,0.65)" }}
             >
               Learning as we grow.
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5">
-            {/* Theme Toggle Pill */}
-            <div
-              className="flex items-center p-0.5 rounded-lg border font-heading text-xs font-semibold"
-              style={{
-                backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(28,39,81,0.05)",
-                borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(28,39,81,0.1)"
-              }}
+          <div className="flex items-center gap-3">
+            {/* Minimal Unboxed Contrast Glyph Toggle */}
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle Theme"
+              className="p-1.5 rounded-lg transition hover:opacity-70"
+              style={{ color: isDark ? "#B09B79" : "#1C2751" }}
             >
-              <button
-                onClick={() => toggleTheme("light")}
-                className="px-2.5 py-1 rounded transition text-xs font-heading font-semibold"
-                style={{
-                  backgroundColor: !isDark ? "#FFFFFF" : "transparent",
-                  color: !isDark ? "#1C2751" : "#94A3B8",
-                  boxShadow: !isDark ? "0 1px 2px rgba(0,0,0,0.08)" : "none"
-                }}
-              >
-                Light
-              </button>
-              <button
-                onClick={() => toggleTheme("dark")}
-                className="px-2.5 py-1 rounded transition text-xs font-heading font-semibold"
-                style={{
-                  backgroundColor: isDark ? "#1C2751" : "transparent",
-                  color: isDark ? "#F3F4F6" : "rgba(28,39,81,0.5)",
-                  boxShadow: isDark ? "0 1px 2px rgba(0,0,0,0.3)" : "none"
-                }}
-              >
-                Dark
-              </button>
-            </div>
+              <Contrast size={18} />
+            </button>
 
-            {/* 13 Seats Signal */}
+            {/* Exclusive Roster Badge */}
             <span
-              className="text-[10px] font-heading font-bold uppercase tracking-widest px-2.5 py-1 rounded border"
+              className="text-[10px] font-heading font-bold uppercase tracking-wider px-2.5 py-1 rounded border"
               style={{
-                backgroundColor: isDark ? "rgba(176,155,121,0.1)" : "rgba(28,39,81,0.05)",
-                color: isDark ? "#B09B79" : "rgba(28,39,81,0.8)",
-                borderColor: isDark ? "rgba(176,155,121,0.2)" : "rgba(28,39,81,0.1)"
+                backgroundColor: isDark ? "rgba(176,155,121,0.12)" : "rgba(28,39,81,0.06)",
+                color: isDark ? "#B09B79" : "#1C2751",
+                borderColor: isDark ? "rgba(176,155,121,0.3)" : "rgba(28,39,81,0.18)"
               }}
             >
-              13 Seats
+              13 Active Seats
             </span>
           </div>
         </header>
@@ -110,13 +89,13 @@ export default function Home() {
         {/* Footer */}
         <footer
           className="w-full max-w-lg text-center border-t pt-4 pb-2"
-          style={{ borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(28,39,81,0.12)" }}
+          style={{ borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(28,39,81,0.15)" }}
         >
           <p
             className="text-[11px] font-body"
             style={{ color: isDark ? "#94A3B8" : "rgba(28,39,81,0.5)" }}
           >
-            STC-Chama · Private Internal Platform · Cycle 4
+            STC-Chama · More Than a Group · Cycle 4
           </p>
         </footer>
       </main>
