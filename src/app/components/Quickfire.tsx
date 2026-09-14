@@ -10,7 +10,7 @@ const QUESTION_TIMER_SECONDS = 35;
 // STC Learn Google Sheets Ingestion Endpoint
 const GOOGLE_SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbytspjwjVhnnPf4S47yx8B0lali94UD5C1gS-M0nGfuimdBTzlvqjpuycnkEj72krIQRg/exec";
 
-// The 13 STC-Chama seats (Alphabetical by First Name)
+// The 13 STC-Chama seats + External Tester Seat
 const STC_MEMBERS = [
   "Allan Mwiti",
   "Asaph Kariuki",
@@ -24,7 +24,8 @@ const STC_MEMBERS = [
   "Michael Kiprop",
   "Michael Trevis",
   "Ryan Ngetich",
-  "Sammy Kimaiyo"
+  "Sammy Kimaiyo",
+  "Guest"
 ];
 
 export default function Quickfire() {
@@ -159,7 +160,7 @@ export default function Quickfire() {
           10 practical scenarios across Chama governance, liquidity, and market execution.
         </p>
 
-        {/* Seat Selection Dropdown */}
+        {/* Seat / Identity Selection */}
         <div className="bg-white rounded-xl p-4 border border-stc-gray/30 text-left mb-5">
           <label className="text-[11px] uppercase font-bold text-stc-navy/70 block mb-2 flex items-center gap-1.5">
             <User size={13} /> Select Your Seat
@@ -276,7 +277,7 @@ export default function Quickfire() {
           </button>
         </div>
 
-        {/* Locked Next Drop Card */}
+        {/* Next Drop Lock Card */}
         <div className="bg-stc-navy/5 border border-stc-navy/10 rounded-xl p-4 flex items-center justify-between text-left">
           <div>
             <div className="flex items-center gap-1.5 text-stc-navy">
@@ -298,7 +299,6 @@ export default function Quickfire() {
   // 3. ACTIVE QUIZ SCREEN
   return (
     <div className="bg-stc-card border border-stc-gray/40 rounded-2xl p-5 sm:p-8 max-w-lg w-full shadow-sm">
-      {/* 10-Tick Progress Bar */}
       <div className="grid grid-cols-10 gap-1.5 mb-5">
         {questions.map((_, idx) => (
           <div
@@ -314,7 +314,6 @@ export default function Quickfire() {
         ))}
       </div>
 
-      {/* Meta Bar */}
       <div className="flex items-center justify-between border-b border-stc-gray/30 pb-3 mb-5">
         <span className="text-xs uppercase tracking-wider text-stc-gold font-semibold font-heading">
           {currentQ.category}
@@ -327,12 +326,10 @@ export default function Quickfire() {
         </div>
       </div>
 
-      {/* Scenario Prompt */}
       <h3 className="text-base sm:text-lg font-heading font-semibold text-stc-navy leading-snug mb-5">
         {currentQ.prompt}
       </h3>
 
-      {/* Options */}
       <div className="space-y-2.5 mb-5">
         {currentQ.options.map((option, idx) => {
           let btnStyle = "border-stc-gray/40 bg-white hover:border-stc-navy/40 text-stc-navy";
@@ -366,7 +363,6 @@ export default function Quickfire() {
         })}
       </div>
 
-      {/* Takeaway */}
       {isAnswered && (
         <div className="bg-white border border-stc-gray/30 rounded-xl p-4 mb-5">
           <p className="text-[11px] uppercase tracking-wide text-stc-gold font-bold mb-1">
@@ -378,7 +374,6 @@ export default function Quickfire() {
         </div>
       )}
 
-      {/* Next Step */}
       {isAnswered && (
         <button
           onClick={handleNext}
