@@ -253,7 +253,8 @@ export default function Quickfire({ isDark }: QuickfireProps) {
   const cardBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(28,39,81,0.12)";
   const innerCardBg = isDark ? "#121933" : "#F9F8F5";
   const mainText = isDark ? "#F3F4F6" : "#1C2751";
-  const mutedText = isDark ? "#94A3B8" : "rgba(28,39,81,0.65)";
+  const mutedText = isDark ? "#94A3B8" : "rgba(28,39,81,0.7)";
+  const goldAccent = "#B09B79";
 
   // 1. UNTIMED REVIEW MODE
   if (isReviewMode) {
@@ -271,11 +272,11 @@ export default function Quickfire({ isDark }: QuickfireProps) {
           <button
             onClick={() => setIsReviewMode(false)}
             className="flex items-center gap-1.5 text-xs font-heading font-semibold hover:opacity-80 transition"
-            style={{ color: isDark ? "#B09B79" : "#1C2751" }}
+            style={{ color: goldAccent }}
           >
             <ArrowLeft size={16} /> Back to Summary
           </button>
-          <span className="text-[11px] font-heading uppercase font-bold tracking-wider" style={{ color: "#B09B79" }}>
+          <span className="text-[11px] font-heading uppercase font-bold tracking-wider" style={{ color: goldAccent }}>
             Debrief · {correctCount}/{questions.length} Correct
           </span>
         </div>
@@ -373,7 +374,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
                     borderColor: cardBorder
                   }}
                 >
-                  <span className="text-[10px] font-heading uppercase font-bold block mb-1" style={{ color: "#B09B79" }}>
+                  <span className="text-[10px] font-heading uppercase font-bold block mb-1" style={{ color: goldAccent }}>
                     The Takeaway
                   </span>
                   <p className="text-xs leading-relaxed font-body" style={{ color: isDark ? "#D1D5DB" : "#1C2751" }}>
@@ -405,7 +406,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
         className="rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-sm text-center border transition-colors"
         style={{ backgroundColor: cardBg, borderColor: cardBorder }}
       >
-        <span className="text-[11px] uppercase tracking-widest font-bold font-heading" style={{ color: "#B09B79" }}>
+        <span className="text-[11px] uppercase tracking-widest font-bold font-heading" style={{ color: goldAccent }}>
           Cycle 4 • Sep 2026
         </span>
         <h2 className="text-2xl sm:text-3xl font-heading font-bold mt-1 mb-2" style={{ color: mainText }}>
@@ -440,41 +441,51 @@ export default function Quickfire({ isDark }: QuickfireProps) {
           </select>
         </div>
 
+        {/* Briefing Rules with Gold Headers & Crisp White Text */}
         <div
-          className="rounded-xl p-5 border text-left space-y-3 mb-6"
+          className="rounded-xl p-5 border text-left space-y-3.5 mb-6"
           style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}
         >
           <div className="flex items-start gap-3">
             <span
               className="h-5 w-5 rounded-full text-xs font-number font-bold flex items-center justify-center shrink-0 mt-0.5"
-              style={{ backgroundColor: "rgba(176,155,121,0.15)", color: "#B09B79" }}
+              style={{ backgroundColor: "rgba(176,155,121,0.15)", color: goldAccent }}
             >
               1
             </span>
-            <p className="text-xs font-body" style={{ color: mainText }}>
-              <strong className="font-heading" style={{ color: mainText }}>35 Seconds per Decision:</strong> Points decay as time ticks down. Speed + accuracy yields top scores.
+            <p className="text-xs font-body leading-relaxed" style={{ color: mainText }}>
+              <strong className="font-heading block sm:inline mr-1" style={{ color: goldAccent }}>
+                35 Seconds per Decision:
+              </strong>
+              Points decay as time ticks down. Speed + accuracy yields top scores.
             </p>
           </div>
           <div className="flex items-start gap-3">
             <span
               className="h-5 w-5 rounded-full text-xs font-number font-bold flex items-center justify-center shrink-0 mt-0.5"
-              style={{ backgroundColor: "rgba(176,155,121,0.15)", color: "#B09B79" }}
+              style={{ backgroundColor: "rgba(176,155,121,0.15)", color: goldAccent }}
             >
               2
             </span>
-            <p className="text-xs font-body" style={{ color: mainText }}>
-              <strong className="font-heading" style={{ color: mainText }}>Official Standing:</strong> Your first completed run writes directly to the group ledger.
+            <p className="text-xs font-body leading-relaxed" style={{ color: mainText }}>
+              <strong className="font-heading block sm:inline mr-1" style={{ color: goldAccent }}>
+                Official Standing:
+              </strong>
+              Your first completed run writes directly to the group ledger.
             </p>
           </div>
           <div className="flex items-start gap-3">
             <span
               className="h-5 w-5 rounded-full text-xs font-number font-bold flex items-center justify-center shrink-0 mt-0.5"
-              style={{ backgroundColor: "rgba(176,155,121,0.15)", color: "#B09B79" }}
+              style={{ backgroundColor: "rgba(176,155,121,0.15)", color: goldAccent }}
             >
               3
             </span>
-            <p className="text-xs font-body" style={{ color: mainText }}>
-              <strong className="font-heading" style={{ color: mainText }}>The Takeaways:</strong> Every decision expands with the operational rule behind it.
+            <p className="text-xs font-body leading-relaxed" style={{ color: mainText }}>
+              <strong className="font-heading block sm:inline mr-1" style={{ color: goldAccent }}>
+                The Takeaways:
+              </strong>
+              Every decision expands with the operational rule behind it.
             </p>
           </div>
         </div>
@@ -502,13 +513,13 @@ export default function Quickfire({ isDark }: QuickfireProps) {
         className="rounded-2xl p-6 sm:p-8 max-w-lg w-full text-center shadow-sm border transition-colors"
         style={{ backgroundColor: cardBg, borderColor: cardBorder }}
       >
-        <span className="text-[11px] uppercase tracking-widest font-bold font-heading" style={{ color: "#B09B79" }}>
+        <span className="text-[11px] uppercase tracking-widest font-bold font-heading" style={{ color: goldAccent }}>
           Cycle 4 • Sep 2026
         </span>
         <h2 className="text-2xl sm:text-3xl font-heading font-bold mt-1" style={{ color: mainText }}>
           Week 01 Complete
         </h2>
-        <p className="text-xs font-heading font-medium mt-1 mb-6" style={{ color: "#B09B79" }}>
+        <p className="text-xs font-heading font-medium mt-1 mb-6" style={{ color: goldAccent }}>
           {getPerformanceTitle()} · {selectedMember}
         </p>
 
@@ -621,7 +632,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
     );
   }
 
-  // 4. ACTIVE TIMED QUIZ (OPTIMIZED SCALE & WEIGHT)
+  // 4. ACTIVE TIMED QUIZ
   return (
     <div
       className="rounded-2xl p-5 sm:p-8 max-w-lg w-full shadow-sm border transition-colors"
@@ -633,7 +644,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
           className="flex items-center justify-between pb-3 mb-4 border-b text-xs font-heading"
           style={{ borderColor: cardBorder }}
         >
-          <span className="font-bold uppercase tracking-wider text-[10px]" style={{ color: "#B09B79" }}>
+          <span className="font-bold uppercase tracking-wider text-[10px]" style={{ color: goldAccent }}>
             Practice Mode (Score Not Recorded)
           </span>
           <button
@@ -656,7 +667,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
                 idx < currentIndex
                   ? "#1C2751"
                   : idx === currentIndex
-                  ? "#B09B79"
+                  ? goldAccent
                   : isDark
                   ? "rgba(255,255,255,0.1)"
                   : "rgba(28,39,81,0.1)"
@@ -670,7 +681,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
         className="flex items-center justify-between border-b pb-3 mb-4"
         style={{ borderColor: cardBorder }}
       >
-        <span className="text-[11px] uppercase tracking-wider font-bold font-heading" style={{ color: "#B09B79" }}>
+        <span className="text-[11px] uppercase tracking-wider font-bold font-heading" style={{ color: goldAccent }}>
           {currentQ.category}
         </span>
         <div className="flex items-center gap-1.5 font-heading">
@@ -690,7 +701,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
         </div>
       </div>
 
-      {/* Calibrated Scenario Prompt (15px Medium with relaxed leading) */}
+      {/* Scenario Prompt */}
       <h3
         className="text-[15px] sm:text-[16px] font-heading font-medium leading-relaxed mb-5"
         style={{ color: mainText }}
@@ -698,7 +709,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
         {currentQ.prompt}
       </h3>
 
-      {/* Calibrated Options (14px Medium with balanced padding) */}
+      {/* Options */}
       <div className="space-y-2.5 mb-5 font-body">
         {currentQ.options.map((option, idx) => {
           let optionBg = innerCardBg;
@@ -752,7 +763,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
             borderColor: cardBorder
           }}
         >
-          <p className="text-[10px] font-heading uppercase tracking-wider font-bold mb-1" style={{ color: "#B09B79" }}>
+          <p className="text-[10px] font-heading uppercase tracking-wider font-bold mb-1" style={{ color: goldAccent }}>
             The Takeaway
           </p>
           <p className="text-xs sm:text-sm leading-relaxed font-body" style={{ color: mainText }}>
