@@ -2,15 +2,30 @@
 
 import React, { useState, useEffect } from "react";
 import { getDropByWeek, Question } from "../data/questionBank";
-import { CheckCircle2, XCircle, ArrowRight, RotateCcw, Clock, Copy, Check, Lock, Play, User } from "lucide-react";
+import {
+  CheckCircle2,
+  XCircle,
+  ArrowRight,
+  RotateCcw,
+  Clock,
+  Copy,
+  Check,
+  Lock,
+  Play,
+  User,
+  BookOpen,
+  ArrowLeft,
+  LogOut
+} from "lucide-react";
 import confetti from "canvas-confetti";
 
 const QUESTION_TIMER_SECONDS = 35;
 
-// STC Learn Google Sheets Ingestion Endpoint
-const GOOGLE_SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbytspjwjVhnnPf4S47yx8B0lali94UD5C1gS-M0nGfuimdBTzlvqjpuycnkEj72krIQRg/exec";
+// Ingestion Endpoint
+const GOOGLE_SHEET_ENDPOINT =
+  "https://script.google.com/macros/s/AKfycbytspjwjVhnnPf4S47yx8B0lali94UD5C1gS-M0nGfuimdBTzlvqjpuycnkEj72krIQRg/exec";
 
-// The 13 STC-Chama seats + External Tester Seat
+// 13 STC-Chama seats + External Tester Seat
 const STC_MEMBERS = [
   "Allan Mwiti",
   "Asaph Kariuki",
@@ -25,12 +40,27 @@ const STC_MEMBERS = [
   "Michael Trevis",
   "Ryan Ngetich",
   "Sammy Kimaiyo",
-  "Guest"
+  "Guest / External Tester"
 ];
 
-export default function Quickfire() {
+interface StoredSession {
+  week: number;
+  memberName: string;
+  score: number;
+  correctCount: number;
+  avgPace: string;
+  userAnswers: number[];
+  completedAt: string;
+}
+
+interface QuickfireProps {
+  isDark: boolean;
+}
+
+export default function Quickfire({ isDark }: QuickfireProps) {
   const currentWeek = 1;
   const questions: Question[] = getDropByWeek(currentWeek);
+  const storageKey = `stc_learn_w${currentWeek}_result`;
 
   const [selectedMember, setSelectedMember] = useState("");
   const [hasStarted, setHasStarted] = useState(false);
@@ -40,16 +70,40 @@ export default function Quickfire() {
   const [score, setScore] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [totalTimeSpent, setTotalTimeSpent] = useState(0);
+  const [userAnswers, setUserAnswers] = useState<number[]>([]);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isReviewMode, setIsReviewMode] = useState(false);
+  const [isPracticeMode, setIsPracticeMode] = useState(false);
   const [timeLeft, setTimeLeft] = useState(QUESTION_TIMER_SECONDS);
   const [copied, setCopied] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [hasSynced, setHasSynced] = useState(false);
+  const [historicalSession, setHistoricalSession] = useState<StoredSession | null>(null);
+
+  // Restore existing session on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed: StoredSession = JSON.parse(saved);
+        setHistoricalSession(parsed);
+        setSelectedMember(parsed.memberName);
+        setScore(parsed.score);
+        setCorrectCount(parsed.correctCount);
+        setUserAnswers(parsed.userAnswers || []);
+        setIsCompleted(true);
+        setHasStarted(true);
+        setHasSynced(true);
+      }
+    } catch (e) {
+      console.error("Failed to read from localStorage", e);
+    }
+  }, [storageKey]);
 
   const currentQ: Question = questions[currentIndex];
 
   useEffect(() => {
-    if (!hasStarted || isAnswered || isCompleted) return;
+    if (!hasStarted || isAnswered || isCompleted || isReviewMode) return;
 
     if (timeLeft === 0) {
       handleSelect(-1);
@@ -61,33 +115,57 @@ export default function Quickfire() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [hasStarted, timeLeft, isAnswered, isCompleted]);
+  }, [hasStarted, timeLeft, isAnswered, isCompleted, isReviewMode]);
 
-  // Send results to Google Sheets once finished
-  const syncToGoogleSheet = async (finalScore: number, finalCorrect: number, totalSeconds: number) => {
-    if (!GOOGLE_SHEET_ENDPOINT) return;
-    setIsSyncing(true);
-
+  // Sync to Google Sheet
+  const syncToGoogleSheet = async (
+    finalScore: number,
+    finalCorrect: number,
+    totalSeconds: number,
+    answersSnapshot: number[]
+  ) => {
     const avgPace = (totalSeconds / questions.length).toFixed(1);
 
-    try {
-      await fetch(GOOGLE_SHEET_ENDPOINT, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          memberName: selectedMember || "Anonymous Member",
-          week: `Week ${currentWeek}`,
-          score: finalScore,
-          accuracy: `${finalCorrect}/${questions.length}`,
-          avgPace: avgPace
-        })
-      });
-      setHasSynced(true);
-    } catch (e) {
-      console.error("Failed to sync score to Google Sheets", e);
-    } finally {
-      setIsSyncing(false);
+    const sessionData: StoredSession = {
+      week: currentWeek,
+      memberName: selectedMember || "Anonymous Member",
+      score: finalScore,
+      correctCount: finalCorrect,
+      avgPace,
+      userAnswers: answersSnapshot,
+      completedAt: new Date().toISOString()
+    };
+
+    if (!isPracticeMode) {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(sessionData));
+        setHistoricalSession(sessionData);
+      } catch (e) {
+        console.error("Failed to save to localStorage", e);
+      }
+
+      if (!GOOGLE_SHEET_ENDPOINT) return;
+      setIsSyncing(true);
+
+      try {
+        await fetch(GOOGLE_SHEET_ENDPOINT, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            memberName: selectedMember || "Anonymous Member",
+            week: `Week ${currentWeek}`,
+            score: finalScore,
+            accuracy: `${finalCorrect}/${questions.length}`,
+            avgPace: avgPace
+          })
+        });
+        setHasSynced(true);
+      } catch (e) {
+        console.error("Failed to sync score to Google Sheets", e);
+      } finally {
+        setIsSyncing(false);
+      }
     }
   };
 
@@ -99,10 +177,18 @@ export default function Quickfire() {
     const timeSpentOnQuestion = QUESTION_TIMER_SECONDS - timeLeft;
     setTotalTimeSpent((prev) => prev + timeSpentOnQuestion);
 
+    const updatedAnswers = [...userAnswers, index];
+    setUserAnswers(updatedAnswers);
+
+    let nextScore = score;
+    let nextCorrect = correctCount;
+
     if (index === currentQ.correctIndex) {
       const points = 100 + timeLeft * 5;
-      setScore((prev) => prev + points);
-      setCorrectCount((prev) => prev + 1);
+      nextScore = score + points;
+      nextCorrect = correctCount + 1;
+      setScore(nextScore);
+      setCorrectCount(nextCorrect);
     }
   };
 
@@ -115,21 +201,37 @@ export default function Quickfire() {
     } else {
       setIsCompleted(true);
       confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
-      syncToGoogleSheet(score, correctCount, totalTimeSpent);
+      syncToGoogleSheet(score, correctCount, totalTimeSpent, userAnswers);
     }
   };
 
-  const resetQuiz = () => {
+  const startPracticeMode = () => {
+    setIsPracticeMode(true);
+    setIsReviewMode(false);
+    setIsCompleted(false);
     setCurrentIndex(0);
     setSelectedOption(null);
     setIsAnswered(false);
     setScore(0);
     setCorrectCount(0);
     setTotalTimeSpent(0);
-    setIsCompleted(false);
+    setUserAnswers([]);
     setTimeLeft(QUESTION_TIMER_SECONDS);
-    setHasStarted(false);
-    setHasSynced(false);
+    setHasStarted(true);
+  };
+
+  const exitPracticeMode = () => {
+    if (historicalSession) {
+      setSelectedMember(historicalSession.memberName);
+      setScore(historicalSession.score);
+      setCorrectCount(historicalSession.correctCount);
+      setUserAnswers(historicalSession.userAnswers || []);
+      setIsCompleted(true);
+      setIsPracticeMode(false);
+    } else {
+      setIsPracticeMode(false);
+      setHasStarted(false);
+    }
   };
 
   const copyToClipboard = () => {
@@ -146,29 +248,192 @@ export default function Quickfire() {
     return "Liquidity Strained";
   };
 
-  // 1. WELCOME & SEAT SELECTION SCREEN
+  // Color tokens
+  const cardBg = isDark ? "#182142" : "#FFFFFF";
+  const cardBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(28,39,81,0.12)";
+  const innerCardBg = isDark ? "#121933" : "#F9F8F5";
+  const mainText = isDark ? "#F3F4F6" : "#1C2751";
+  const mutedText = isDark ? "#94A3B8" : "rgba(28,39,81,0.65)";
+
+  // 1. UNTIMED REVIEW MODE (WITH HIGH-CONTRAST LIGHT/DARK ADAPTATION)
+  if (isReviewMode) {
+    const answersToDisplay = historicalSession?.userAnswers || userAnswers;
+
+    return (
+      <div
+        className="rounded-2xl p-5 sm:p-8 max-w-lg w-full shadow-sm border transition-colors"
+        style={{ backgroundColor: cardBg, borderColor: cardBorder }}
+      >
+        <div
+          className="flex items-center justify-between border-b pb-4 mb-6"
+          style={{ borderColor: cardBorder }}
+        >
+          <button
+            onClick={() => setIsReviewMode(false)}
+            className="flex items-center gap-1.5 text-xs font-heading font-semibold hover:opacity-80 transition"
+            style={{ color: isDark ? "#B09B79" : "#1C2751" }}
+          >
+            <ArrowLeft size={16} /> Back to Summary
+          </button>
+          <span className="text-[11px] font-heading uppercase font-bold tracking-wider" style={{ color: "#B09B79" }}>
+            Debrief · {correctCount}/{questions.length} Correct
+          </span>
+        </div>
+
+        <div className="space-y-6">
+          {questions.map((q, qIndex) => {
+            const memberChoice = answersToDisplay[qIndex];
+            const isCorrect = memberChoice === q.correctIndex;
+            const wasTimedOut = memberChoice === -1 || memberChoice === undefined;
+
+            return (
+              <div
+                key={q.id}
+                className="rounded-xl p-4 sm:p-5 border text-left space-y-3"
+                style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}
+              >
+                <div className="flex items-center justify-between">
+                  <span
+                    className="text-[10px] font-heading font-bold uppercase tracking-wider"
+                    style={{ color: mutedText }}
+                  >
+                    Question {qIndex + 1} · {q.category}
+                  </span>
+                  {isCorrect ? (
+                    <span
+                      className="inline-flex items-center gap-1 text-[11px] font-heading font-bold px-2 py-0.5 rounded border"
+                      style={{
+                        backgroundColor: isDark ? "rgba(34, 197, 94, 0.15)" : "#ECFDF5",
+                        color: isDark ? "#4ADE80" : "#065F46",
+                        borderColor: isDark ? "rgba(34, 197, 94, 0.3)" : "#A7F3D0"
+                      }}
+                    >
+                      <CheckCircle2 size={13} /> Correct
+                    </span>
+                  ) : (
+                    <span
+                      className="inline-flex items-center gap-1 text-[11px] font-heading font-bold px-2 py-0.5 rounded border"
+                      style={{
+                        backgroundColor: isDark ? "rgba(239, 68, 68, 0.15)" : "#FEF2F2",
+                        color: isDark ? "#F87171" : "#991B1B",
+                        borderColor: isDark ? "rgba(239, 68, 68, 0.3)" : "#FECACA"
+                      }}
+                    >
+                      <XCircle size={13} /> {wasTimedOut ? "Timed Out" : "Incorrect"}
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-xs sm:text-sm font-heading font-semibold leading-snug" style={{ color: mainText }}>
+                  {q.prompt}
+                </p>
+
+                {/* Choices: High Contrast in both modes */}
+                <div className="space-y-2 pt-1 font-body">
+                  {!isCorrect && !wasTimedOut && (
+                    <div
+                      className="p-3 rounded-lg border text-xs leading-relaxed"
+                      style={{
+                        backgroundColor: isDark ? "rgba(153, 27, 27, 0.25)" : "#FEF2F2",
+                        borderColor: isDark ? "rgba(239, 68, 68, 0.4)" : "#F87171",
+                        color: isDark ? "#FCA5A5" : "#7F1D1D"
+                      }}
+                    >
+                      <span
+                        className="font-heading font-bold block text-[10px] uppercase tracking-wider mb-0.5"
+                        style={{ color: isDark ? "#F87171" : "#991B1B" }}
+                      >
+                        Your Choice
+                      </span>
+                      {q.options[memberChoice]}
+                    </div>
+                  )}
+
+                  <div
+                    className="p-3 rounded-lg border text-xs leading-relaxed"
+                    style={{
+                      backgroundColor: isDark ? "rgba(22, 101, 52, 0.25)" : "#F0FDF4",
+                      borderColor: isDark ? "rgba(34, 197, 94, 0.4)" : "#4ADE80",
+                      color: isDark ? "#86EFAC" : "#14532D"
+                    }}
+                  >
+                    <span
+                      className="font-heading font-bold block text-[10px] uppercase tracking-wider mb-0.5"
+                      style={{ color: isDark ? "#4ADE80" : "#166534" }}
+                    >
+                      Correct Answer
+                    </span>
+                    {q.options[q.correctIndex]}
+                  </div>
+                </div>
+
+                {/* Takeaway Box */}
+                <div
+                  className="rounded-lg p-3 border"
+                  style={{
+                    backgroundColor: isDark ? "rgba(255,255,255,0.02)" : "#FFFFFF",
+                    borderColor: cardBorder
+                  }}
+                >
+                  <span className="text-[10px] font-heading uppercase font-bold block mb-1" style={{ color: "#B09B79" }}>
+                    The Takeaway
+                  </span>
+                  <p className="text-xs leading-relaxed font-body" style={{ color: isDark ? "#D1D5DB" : "#1C2751" }}>
+                    {q.explanation}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="mt-6 pt-4 border-t" style={{ borderColor: cardBorder }}>
+          <button
+            onClick={() => setIsReviewMode(false)}
+            className="w-full py-3.5 rounded-xl font-heading font-medium transition text-sm text-white hover:opacity-95"
+            style={{ backgroundColor: "#1C2751" }}
+          >
+            Return to Score Summary
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // 2. WELCOME & SEAT SELECTION
   if (!hasStarted) {
     return (
-      <div className="bg-stc-card border border-stc-gray/40 rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-sm text-center">
-        <span className="text-[11px] uppercase tracking-widest font-bold text-stc-gold font-heading">
+      <div
+        className="rounded-2xl p-6 sm:p-8 max-w-lg w-full shadow-sm text-center border transition-colors"
+        style={{ backgroundColor: cardBg, borderColor: cardBorder }}
+      >
+        <span className="text-[11px] uppercase tracking-widest font-bold font-heading" style={{ color: "#B09B79" }}>
           Cycle 4 • Sep 2026
         </span>
-        <h2 className="text-2xl sm:text-3xl font-heading font-bold text-stc-navy mt-1 mb-2">
+        <h2 className="text-2xl sm:text-3xl font-heading font-bold mt-1 mb-2" style={{ color: mainText }}>
           Week 01 Quickfire
         </h2>
-        <p className="text-sm text-stc-navy/70 mb-5">
+        <p className="text-sm mb-5 font-body" style={{ color: mutedText }}>
           10 practical scenarios across Chama governance, liquidity, and market execution.
         </p>
 
-        {/* Seat / Identity Selection */}
-        <div className="bg-white rounded-xl p-4 border border-stc-gray/30 text-left mb-5">
-          <label className="text-[11px] uppercase font-bold text-stc-navy/70 block mb-2 flex items-center gap-1.5">
+        {/* Seat Dropdown */}
+        <div
+          className="rounded-xl p-4 border text-left mb-5"
+          style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}
+        >
+          <label className="text-[11px] font-heading uppercase font-bold block mb-2 flex items-center gap-1.5" style={{ color: mutedText }}>
             <User size={13} /> Select Your Seat
           </label>
           <select
             value={selectedMember}
             onChange={(e) => setSelectedMember(e.target.value)}
-            className="w-full p-3 rounded-lg border border-stc-gray/40 bg-stc-beige/30 text-stc-navy text-sm font-medium focus:outline-none focus:border-stc-navy"
+            className="w-full p-3 rounded-lg border text-sm font-heading font-medium focus:outline-none"
+            style={{
+              backgroundColor: isDark ? "#182142" : "#FFFFFF",
+              color: mainText,
+              borderColor: cardBorder
+            }}
           >
             <option value="">-- Choose Member Name --</option>
             {STC_MEMBERS.map((name, i) => (
@@ -177,23 +442,41 @@ export default function Quickfire() {
           </select>
         </div>
 
-        <div className="bg-white rounded-xl p-5 border border-stc-gray/30 text-left space-y-3 mb-6">
+        <div
+          className="rounded-xl p-5 border text-left space-y-3 mb-6"
+          style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}
+        >
           <div className="flex items-start gap-3">
-            <span className="h-5 w-5 rounded-full bg-stc-navy/5 text-stc-navy text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
-            <p className="text-xs text-stc-navy/80">
-              <strong className="text-stc-navy">35 Seconds per Decision:</strong> Points decay as time ticks down. Speed + accuracy yields top scores.
+            <span
+              className="h-5 w-5 rounded-full text-xs font-heading font-bold flex items-center justify-center shrink-0 mt-0.5"
+              style={{ backgroundColor: "rgba(176,155,121,0.15)", color: "#B09B79" }}
+            >
+              1
+            </span>
+            <p className="text-xs font-body" style={{ color: mainText }}>
+              <strong className="font-heading" style={{ color: mainText }}>35 Seconds per Decision:</strong> Points decay as time ticks down. Speed + accuracy yields top scores.
             </p>
           </div>
           <div className="flex items-start gap-3">
-            <span className="h-5 w-5 rounded-full bg-stc-navy/5 text-stc-navy text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
-            <p className="text-xs text-stc-navy/80">
-              <strong className="text-stc-navy">Official Standing:</strong> Your first run writes directly to the group ledger.
+            <span
+              className="h-5 w-5 rounded-full text-xs font-heading font-bold flex items-center justify-center shrink-0 mt-0.5"
+              style={{ backgroundColor: "rgba(176,155,121,0.15)", color: "#B09B79" }}
+            >
+              2
+            </span>
+            <p className="text-xs font-body" style={{ color: mainText }}>
+              <strong className="font-heading" style={{ color: mainText }}>Official Standing:</strong> Your first completed run writes directly to the group ledger.
             </p>
           </div>
           <div className="flex items-start gap-3">
-            <span className="h-5 w-5 rounded-full bg-stc-navy/5 text-stc-navy text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
-            <p className="text-xs text-stc-navy/80">
-              <strong className="text-stc-navy">The Takeaways:</strong> Every decision expands with the operational rule behind it.
+            <span
+              className="h-5 w-5 rounded-full text-xs font-heading font-bold flex items-center justify-center shrink-0 mt-0.5"
+              style={{ backgroundColor: "rgba(176,155,121,0.15)", color: "#B09B79" }}
+            >
+              3
+            </span>
+            <p className="text-xs font-body" style={{ color: mainText }}>
+              <strong className="font-heading" style={{ color: mainText }}>The Takeaways:</strong> Every decision expands with the operational rule behind it.
             </p>
           </div>
         </div>
@@ -201,11 +484,10 @@ export default function Quickfire() {
         <button
           disabled={!selectedMember}
           onClick={() => setHasStarted(true)}
-          className={`flex items-center justify-center gap-2 w-full py-4 px-6 rounded-xl font-medium transition shadow-sm text-sm ${
-            selectedMember
-              ? "bg-stc-navy text-white hover:bg-stc-navy/90"
-              : "bg-stc-gray/30 text-stc-navy/40 cursor-not-allowed"
+          className={`flex items-center justify-center gap-2 w-full py-4 px-6 rounded-xl font-heading font-medium transition shadow-sm text-sm text-white ${
+            selectedMember ? "hover:opacity-95" : "opacity-40 cursor-not-allowed"
           }`}
+          style={{ backgroundColor: "#1C2751" }}
         >
           <Play size={16} fill="currentColor" /> Start Official Run
         </button>
@@ -213,82 +495,127 @@ export default function Quickfire() {
     );
   }
 
-  // 2. COMPLETION SCREEN
+  // 3. COMPLETION / DASHBOARD
   if (isCompleted) {
-    const avgPace = (totalTimeSpent / questions.length).toFixed(1);
+    const avgPace = historicalSession?.avgPace || (totalTimeSpent / questions.length).toFixed(1);
 
     return (
-      <div className="bg-stc-card border border-stc-gray/40 rounded-2xl p-6 sm:p-8 max-w-lg w-full text-center shadow-sm">
-        <span className="text-[11px] uppercase tracking-widest font-bold text-stc-gold font-heading">
+      <div
+        className="rounded-2xl p-6 sm:p-8 max-w-lg w-full text-center shadow-sm border transition-colors"
+        style={{ backgroundColor: cardBg, borderColor: cardBorder }}
+      >
+        <span className="text-[11px] uppercase tracking-widest font-bold font-heading" style={{ color: "#B09B79" }}>
           Cycle 4 • Sep 2026
         </span>
-        <h2 className="text-2xl sm:text-3xl font-heading font-bold text-stc-navy mt-1">
+        <h2 className="text-2xl sm:text-3xl font-heading font-bold mt-1" style={{ color: mainText }}>
           Week 01 Complete
         </h2>
-        <p className="text-xs font-medium text-stc-gold mt-1 mb-6">
+        <p className="text-xs font-heading font-medium mt-1 mb-6" style={{ color: "#B09B79" }}>
           {getPerformanceTitle()} · {selectedMember}
         </p>
 
-        {/* Hero Score Box */}
-        <div className="bg-white rounded-xl p-6 border border-stc-gray/30 mb-4">
-          <p className="text-[11px] text-stc-navy/60 font-semibold tracking-wider uppercase">
+        {/* Score Box */}
+        <div
+          className="rounded-xl p-6 border mb-4"
+          style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}
+        >
+          <p className="text-[11px] font-heading font-semibold tracking-wider uppercase" style={{ color: mutedText }}>
             Total Score
           </p>
-          <p className="text-5xl font-heading font-bold text-stc-navy mt-1">
+          <p className="text-5xl font-heading font-bold mt-1" style={{ color: mainText }}>
             {score}
           </p>
 
-          <div className="grid grid-cols-2 gap-4 mt-6 pt-5 border-t border-stc-gray/20">
+          <div className="grid grid-cols-2 gap-4 mt-6 pt-5 border-t" style={{ borderColor: cardBorder }}>
             <div>
-              <p className="text-[10px] uppercase font-semibold text-stc-navy/50 tracking-wider">Accuracy</p>
-              <p className="text-lg font-bold font-heading text-stc-navy mt-0.5">
+              <p className="text-[10px] font-heading uppercase font-semibold tracking-wider" style={{ color: mutedText }}>
+                Accuracy
+              </p>
+              <p className="text-lg font-bold font-heading mt-0.5" style={{ color: mainText }}>
                 {correctCount} / {questions.length}
               </p>
             </div>
             <div>
-              <p className="text-[10px] uppercase font-semibold text-stc-navy/50 tracking-wider">Avg Pace</p>
-              <p className="text-lg font-bold font-heading text-stc-navy mt-0.5">
+              <p className="text-[10px] font-heading uppercase font-semibold tracking-wider" style={{ color: mutedText }}>
+                Avg Pace
+              </p>
+              <p className="text-lg font-bold font-heading mt-0.5" style={{ color: mainText }}>
                 {avgPace}s
               </p>
             </div>
           </div>
 
-          <div className="mt-4 text-[11px] text-stc-navy/50 flex items-center justify-center gap-1.5">
+          <div className="mt-4 text-[11px] font-heading flex items-center justify-center gap-1.5" style={{ color: mutedText }}>
             {isSyncing && <span>Syncing to ledger...</span>}
-            {hasSynced && <span className="text-green-600 font-medium">✓ Recorded to STC Ledger</span>}
+            {hasSynced && (
+              <span className="text-green-600 dark:text-green-400 font-medium">
+                ✓ Recorded to STC Ledger
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Action Controls */}
         <div className="space-y-2.5 mb-6">
           <button
-            onClick={copyToClipboard}
-            className="flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-xl bg-stc-navy text-white font-medium hover:bg-stc-navy/90 transition text-sm shadow-sm"
+            onClick={() => setIsReviewMode(true)}
+            className="flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-xl text-white font-heading font-medium hover:opacity-95 transition text-sm shadow-sm"
+            style={{ backgroundColor: "#1C2751" }}
           >
-            {copied ? <Check size={16} className="text-green-400" /> : <Copy size={16} />}
+            <BookOpen size={16} /> Review Decisions & Takeaways
+          </button>
+
+          <button
+            onClick={copyToClipboard}
+            className="flex items-center justify-center gap-2 w-full py-3 px-6 rounded-xl border font-heading font-medium hover:opacity-90 transition text-xs shadow-sm"
+            style={{
+              backgroundColor: innerCardBg,
+              color: mainText,
+              borderColor: cardBorder
+            }}
+          >
+            {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
             {copied ? "Copied to Clipboard!" : "Copy Result for Group Chat"}
           </button>
 
           <button
-            onClick={resetQuiz}
-            className="flex items-center justify-center gap-2 w-full py-3 px-6 rounded-xl bg-transparent border border-stc-gray/50 text-stc-navy/70 font-medium hover:bg-white transition text-xs"
+            onClick={startPracticeMode}
+            className="flex items-center justify-center gap-2 w-full py-2.5 px-6 rounded-xl border hover:opacity-80 transition text-xs font-heading font-medium"
+            style={{
+              backgroundColor: "transparent",
+              borderColor: cardBorder,
+              color: mutedText
+            }}
           >
-            <RotateCcw size={14} /> Practice Mode
+            <RotateCcw size={13} /> Enter Practice Mode
           </button>
         </div>
 
-        {/* Next Drop Lock Card */}
-        <div className="bg-stc-navy/5 border border-stc-navy/10 rounded-xl p-4 flex items-center justify-between text-left">
+        {/* Locked Next Drop */}
+        <div
+          className="rounded-xl p-4 flex items-center justify-between text-left border"
+          style={{
+            backgroundColor: isDark ? "rgba(255,255,255,0.02)" : "rgba(28,39,81,0.03)",
+            borderColor: cardBorder
+          }}
+        >
           <div>
-            <div className="flex items-center gap-1.5 text-stc-navy">
+            <div className="flex items-center gap-1.5" style={{ color: mainText }}>
               <Lock size={13} />
               <p className="text-xs font-bold font-heading">Week 02 Quickfire</p>
             </div>
-            <p className="text-[11px] text-stc-navy/60 mt-0.5">
+            <p className="text-[11px] font-body mt-0.5" style={{ color: mutedText }}>
               Liquidity Buffers, Debt Strategy & MLP
             </p>
           </div>
-          <span className="text-[10px] font-semibold text-stc-navy/70 bg-white px-2 py-1 rounded border border-stc-gray/30 whitespace-nowrap">
+          <span
+            className="text-[10px] font-heading font-semibold px-2 py-1 rounded border whitespace-nowrap"
+            style={{
+              backgroundColor: cardBg,
+              color: mainText,
+              borderColor: cardBorder
+            }}
+          >
             Mon 8:00 AM
           </span>
         </div>
@@ -296,51 +623,98 @@ export default function Quickfire() {
     );
   }
 
-  // 3. ACTIVE QUIZ SCREEN
+  // 4. ACTIVE TIMED QUIZ
   return (
-    <div className="bg-stc-card border border-stc-gray/40 rounded-2xl p-5 sm:p-8 max-w-lg w-full shadow-sm">
+    <div
+      className="rounded-2xl p-5 sm:p-8 max-w-lg w-full shadow-sm border transition-colors"
+      style={{ backgroundColor: cardBg, borderColor: cardBorder }}
+    >
+      {/* Practice Mode Exit Bar */}
+      {isPracticeMode && (
+        <div
+          className="flex items-center justify-between pb-3 mb-4 border-b text-xs font-heading"
+          style={{ borderColor: cardBorder }}
+        >
+          <span className="font-bold uppercase tracking-wider text-[10px]" style={{ color: "#B09B79" }}>
+            Practice Mode (Score Not Recorded)
+          </span>
+          <button
+            onClick={exitPracticeMode}
+            className="flex items-center gap-1 text-[11px] font-semibold text-red-500 hover:text-red-600 transition"
+          >
+            <LogOut size={13} /> Exit Practice
+          </button>
+        </div>
+      )}
+
+      {/* 10-Tick Progress Segments */}
       <div className="grid grid-cols-10 gap-1.5 mb-5">
         {questions.map((_, idx) => (
           <div
             key={idx}
-            className={`h-1.5 rounded-full transition-all ${
-              idx < currentIndex
-                ? "bg-stc-navy"
-                : idx === currentIndex
-                ? "bg-stc-gold"
-                : "bg-stc-gray/30"
-            }`}
+            className="h-1.5 rounded-full transition-all"
+            style={{
+              backgroundColor:
+                idx < currentIndex
+                  ? "#1C2751"
+                  : idx === currentIndex
+                  ? "#B09B79"
+                  : isDark
+                  ? "rgba(255,255,255,0.1)"
+                  : "rgba(28,39,81,0.1)"
+            }}
           />
         ))}
       </div>
 
-      <div className="flex items-center justify-between border-b border-stc-gray/30 pb-3 mb-5">
-        <span className="text-xs uppercase tracking-wider text-stc-gold font-semibold font-heading">
+      {/* Meta Bar */}
+      <div
+        className="flex items-center justify-between border-b pb-3 mb-5"
+        style={{ borderColor: cardBorder }}
+      >
+        <span className="text-xs uppercase tracking-wider font-semibold font-heading" style={{ color: "#B09B79" }}>
           {currentQ.category}
         </span>
-        <div className="flex items-center gap-1.5">
-          <Clock size={15} className={timeLeft <= 8 ? "text-red-600 animate-pulse" : "text-stc-navy/50"} />
-          <p className={`text-base font-bold font-heading ${timeLeft <= 8 ? "text-red-600 animate-pulse" : "text-stc-navy"}`}>
+        <div className="flex items-center gap-1.5 font-heading">
+          <Clock
+            size={15}
+            className={timeLeft <= 8 ? "text-red-500 animate-pulse" : ""}
+            style={{ color: timeLeft > 8 ? mutedText : undefined }}
+          />
+          <p
+            className={`text-base font-bold ${
+              timeLeft <= 8 ? "text-red-500 animate-pulse" : ""
+            }`}
+            style={{ color: timeLeft > 8 ? mainText : undefined }}
+          >
             {timeLeft}s
           </p>
         </div>
       </div>
 
-      <h3 className="text-base sm:text-lg font-heading font-semibold text-stc-navy leading-snug mb-5">
+      {/* Scenario Prompt */}
+      <h3 className="text-base sm:text-lg font-heading font-semibold leading-snug mb-5" style={{ color: mainText }}>
         {currentQ.prompt}
       </h3>
 
-      <div className="space-y-2.5 mb-5">
+      {/* Options */}
+      <div className="space-y-2.5 mb-5 font-body">
         {currentQ.options.map((option, idx) => {
-          let btnStyle = "border-stc-gray/40 bg-white hover:border-stc-navy/40 text-stc-navy";
+          let optionBg = innerCardBg;
+          let optionBorder = cardBorder;
+          let optionTextColor = mainText;
 
           if (isAnswered) {
             if (idx === currentQ.correctIndex) {
-              btnStyle = "border-green-600 bg-green-50 text-green-900 font-medium";
+              optionBg = isDark ? "rgba(22, 101, 52, 0.25)" : "#F0FDF4";
+              optionBorder = "#16A34A";
+              optionTextColor = isDark ? "#86EFAC" : "#14532D";
             } else if (idx === selectedOption) {
-              btnStyle = "border-red-500 bg-red-50 text-red-900";
+              optionBg = isDark ? "rgba(153, 27, 27, 0.25)" : "#FEF2F2";
+              optionBorder = "#EF4444";
+              optionTextColor = isDark ? "#FCA5A5" : "#7F1D1D";
             } else {
-              btnStyle = "border-stc-gray/20 bg-white/50 text-stc-navy/40";
+              optionTextColor = mutedText;
             }
           }
 
@@ -349,11 +723,16 @@ export default function Quickfire() {
               key={idx}
               disabled={isAnswered}
               onClick={() => handleSelect(idx)}
-              className={`w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm transition flex items-center justify-between ${btnStyle}`}
+              className="w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm transition flex items-center justify-between"
+              style={{
+                backgroundColor: optionBg,
+                borderColor: optionBorder,
+                color: optionTextColor
+              }}
             >
               <span>{option}</span>
               {isAnswered && idx === currentQ.correctIndex && (
-                <CheckCircle2 size={16} className="text-green-600 shrink-0 ml-2" />
+                <CheckCircle2 size={16} className="text-green-500 shrink-0 ml-2" />
               )}
               {isAnswered && idx === selectedOption && idx !== currentQ.correctIndex && (
                 <XCircle size={16} className="text-red-500 shrink-0 ml-2" />
@@ -363,21 +742,30 @@ export default function Quickfire() {
         })}
       </div>
 
+      {/* Takeaway Box */}
       {isAnswered && (
-        <div className="bg-white border border-stc-gray/30 rounded-xl p-4 mb-5">
-          <p className="text-[11px] uppercase tracking-wide text-stc-gold font-bold mb-1">
+        <div
+          className="rounded-xl p-4 mb-5 border"
+          style={{
+            backgroundColor: innerCardBg,
+            borderColor: cardBorder
+          }}
+        >
+          <p className="text-[11px] font-heading uppercase tracking-wide font-bold mb-1" style={{ color: "#B09B79" }}>
             The Takeaway
           </p>
-          <p className="text-xs sm:text-sm text-stc-navy/85 leading-relaxed font-body">
+          <p className="text-xs sm:text-sm leading-relaxed font-body" style={{ color: mainText }}>
             {currentQ.explanation}
           </p>
         </div>
       )}
 
+      {/* Next Trigger */}
       {isAnswered && (
         <button
           onClick={handleNext}
-          className="flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-xl bg-stc-navy text-white font-medium hover:bg-stc-navy/90 transition text-sm"
+          className="flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-xl font-heading font-medium transition text-sm text-white hover:opacity-95"
+          style={{ backgroundColor: "#1C2751" }}
         >
           {currentIndex + 1 === questions.length ? "Finish Session" : "Next Question"}
           <ArrowRight size={16} />
