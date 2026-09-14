@@ -15,7 +15,8 @@ import {
   User,
   BookOpen,
   ArrowLeft,
-  LogOut
+  LogOut,
+  Info
 } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -417,76 +418,87 @@ export default function Quickfire({ isDark }: QuickfireProps) {
         </p>
 
         {/* Seat Dropdown */}
-        <div
-          className="rounded-xl p-4 border text-left mb-5"
-          style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}
-        >
+        <div className="text-left mb-5">
           <label className="text-[11px] font-heading uppercase font-bold block mb-2 flex items-center gap-1.5" style={{ color: mutedText }}>
             <User size={13} /> Select Your Seat
           </label>
-          <select
-            value={selectedMember}
-            onChange={(e) => setSelectedMember(e.target.value)}
-            className="w-full p-3 rounded-lg border text-sm font-heading font-medium focus:outline-none"
-            style={{
-              backgroundColor: isDark ? "#182142" : "#FFFFFF",
-              color: mainText,
-              borderColor: cardBorder
-            }}
+          <div
+            className="rounded-xl p-4 border"
+            style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}
           >
-            <option value="">-- Choose Member Name --</option>
-            {STC_MEMBERS.map((name, i) => (
-              <option key={i} value={name}>{name}</option>
-            ))}
-          </select>
+            <select
+              value={selectedMember}
+              onChange={(e) => setSelectedMember(e.target.value)}
+              className="w-full p-3 rounded-lg border text-sm font-heading font-medium focus:outline-none"
+              style={{
+                backgroundColor: isDark ? "#182142" : "#FFFFFF",
+                color: mainText,
+                borderColor: cardBorder
+              }}
+            >
+              <option value="">-- Choose Member Name --</option>
+              {STC_MEMBERS.map((name, i) => (
+                <option key={i} value={name}>{name}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        {/* Briefing Rules with Gold Headers & Crisp White Text */}
-        <div
-          className="rounded-xl p-5 border text-left space-y-3.5 mb-6"
-          style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}
-        >
-          <div className="flex items-start gap-3">
-            <span
-              className="h-5 w-5 rounded-full text-xs font-number font-bold flex items-center justify-center shrink-0 mt-0.5"
-              style={{ backgroundColor: "rgba(176,155,121,0.15)", color: goldAccent }}
-            >
-              1
-            </span>
-            <p className="text-xs font-body leading-relaxed" style={{ color: mainText }}>
-              <strong className="font-heading block sm:inline mr-1" style={{ color: goldAccent }}>
-                35 Seconds per Decision:
-              </strong>
-              Points decay as time ticks down. Speed + accuracy yields top scores.
-            </p>
-          </div>
-          <div className="flex items-start gap-3">
-            <span
-              className="h-5 w-5 rounded-full text-xs font-number font-bold flex items-center justify-center shrink-0 mt-0.5"
-              style={{ backgroundColor: "rgba(176,155,121,0.15)", color: goldAccent }}
-            >
-              2
-            </span>
-            <p className="text-xs font-body leading-relaxed" style={{ color: mainText }}>
-              <strong className="font-heading block sm:inline mr-1" style={{ color: goldAccent }}>
-                Official Standing:
-              </strong>
-              Your first completed run writes directly to the group ledger.
-            </p>
-          </div>
-          <div className="flex items-start gap-3">
-            <span
-              className="h-5 w-5 rounded-full text-xs font-number font-bold flex items-center justify-center shrink-0 mt-0.5"
-              style={{ backgroundColor: "rgba(176,155,121,0.15)", color: goldAccent }}
-            >
-              3
-            </span>
-            <p className="text-xs font-body leading-relaxed" style={{ color: mainText }}>
-              <strong className="font-heading block sm:inline mr-1" style={{ color: goldAccent }}>
-                The Takeaways:
-              </strong>
-              Every decision expands with the operational rule behind it.
-            </p>
+        {/* Briefing Rules Header & Card */}
+        <div className="text-left mb-6">
+          <label
+            className="text-[11px] font-heading uppercase font-bold block mb-2 flex items-center gap-1.5"
+            style={{ color: mutedText }}
+          >
+            <Info size={13} /> Before You Begin
+          </label>
+
+          <div
+            className="rounded-xl p-5 border space-y-3.5"
+            style={{ backgroundColor: innerCardBg, borderColor: cardBorder }}
+          >
+            <div className="flex items-start gap-3">
+              <span
+                className="h-5 w-5 rounded-full text-xs font-number font-bold flex items-center justify-center shrink-0 mt-0.5"
+                style={{ backgroundColor: "rgba(176,155,121,0.15)", color: goldAccent }}
+              >
+                1
+              </span>
+              <p className="text-xs font-body leading-relaxed" style={{ color: mainText }}>
+                <strong className="font-heading block sm:inline mr-1" style={{ color: goldAccent }}>
+                  35 Seconds per Decision:
+                </strong>
+                Points decay as time ticks down. Speed + accuracy yields top scores.
+              </p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span
+                className="h-5 w-5 rounded-full text-xs font-number font-bold flex items-center justify-center shrink-0 mt-0.5"
+                style={{ backgroundColor: "rgba(176,155,121,0.15)", color: goldAccent }}
+              >
+                2
+              </span>
+              <p className="text-xs font-body leading-relaxed" style={{ color: mainText }}>
+                <strong className="font-heading block sm:inline mr-1" style={{ color: goldAccent }}>
+                  Official Standing:
+                </strong>
+                Your first completed run writes directly to the group ledger.
+              </p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span
+                className="h-5 w-5 rounded-full text-xs font-number font-bold flex items-center justify-center shrink-0 mt-0.5"
+                style={{ backgroundColor: "rgba(176,155,121,0.15)", color: goldAccent }}
+              >
+                3
+              </span>
+              <p className="text-xs font-body leading-relaxed" style={{ color: mainText }}>
+                <strong className="font-heading block sm:inline mr-1" style={{ color: goldAccent }}>
+                  The Takeaways:
+                </strong>
+                Every decision expands with the operational rule behind it.
+              </p>
+            </div>
           </div>
         </div>
 
