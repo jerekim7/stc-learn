@@ -118,7 +118,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
     return () => clearInterval(timer);
   }, [hasStarted, timeLeft, isAnswered, isCompleted, isReviewMode]);
 
-  // Sync to Google Sheet
+  // Sync to Google Sheet (Includes 10-Question Breakdown)
   const syncToGoogleSheet = async (
     finalScore: number,
     finalCorrect: number,
@@ -148,6 +148,15 @@ export default function Quickfire({ isDark }: QuickfireProps) {
       if (!GOOGLE_SHEET_ENDPOINT) return;
       setIsSyncing(true);
 
+      // Map answers to clean representations: "✓", "✗ (B)", or "Timeout"
+      const questionBreakdown = questions.map((q, idx) => {
+        const choice = answersSnapshot[idx];
+        if (choice === -1 || choice === undefined) return "Timeout";
+        if (choice === q.correctIndex) return "✓";
+        const letters = ["A", "B", "C", "D"];
+        return `✗ (${letters[choice] || choice})`;
+      });
+
       try {
         await fetch(GOOGLE_SHEET_ENDPOINT, {
           method: "POST",
@@ -158,7 +167,8 @@ export default function Quickfire({ isDark }: QuickfireProps) {
             week: `Week ${currentWeek}`,
             score: finalScore,
             accuracy: `${finalCorrect}/${questions.length}`,
-            avgPace: avgPace
+            avgPace: avgPace,
+            questionBreakdown: questionBreakdown
           })
         });
         setHasSynced(true);
