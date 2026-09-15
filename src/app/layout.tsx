@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat, Plus_Jakarta_Sans, Inter, Lexend } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -41,7 +42,10 @@ export default function RootLayout({
       lang="en"
       className={`${montserrat.variable} ${plusJakartaSans.variable} ${inter.variable} ${lexend.variable}`}
     >
-      <body className="font-body antialiased">{children}</body>
+      <body className="font-body antialiased">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
