@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { getDropByWeek, Question } from "../data/questionBank";
 import {
   CheckCircle2,
@@ -16,7 +17,8 @@ import {
   BookOpen,
   ArrowLeft,
   LogOut,
-  Info
+  Info,
+  Trophy
 } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -588,6 +590,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
 
         {/* Action Controls */}
         <div className="space-y-2.5 mb-6">
+          {/* 1. Review Decisions & Takeaways */}
           <button
             onClick={() => setIsReviewMode(true)}
             className="flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-xl text-white font-heading font-medium hover:opacity-95 transition text-sm shadow-sm"
@@ -596,6 +599,21 @@ export default function Quickfire({ isDark }: QuickfireProps) {
             <BookOpen size={16} /> Review Decisions & Takeaways
           </button>
 
+          {/* 2. View Week 01 Standings (Dedicated Route Link) */}
+          <Link
+            href="/leaderboard"
+            className="flex items-center justify-center gap-2 w-full py-3 px-6 rounded-xl border font-heading font-medium hover:opacity-90 transition text-xs shadow-sm"
+            style={{
+              backgroundColor: innerCardBg,
+              color: mainText,
+              borderColor: cardBorder
+            }}
+          >
+            <Trophy size={14} style={{ color: goldAccent }} />
+            View Week 01 Standings
+          </Link>
+
+          {/* 3. Copy Result for Group Chat */}
           <button
             onClick={copyToClipboard}
             className="flex items-center justify-center gap-2 w-full py-3 px-6 rounded-xl border font-heading font-medium hover:opacity-90 transition text-xs shadow-sm"
@@ -609,6 +627,7 @@ export default function Quickfire({ isDark }: QuickfireProps) {
             {copied ? "Copied to Clipboard!" : "Copy Result for Group Chat"}
           </button>
 
+          {/* 4. Practice Mode */}
           <button
             onClick={startPracticeMode}
             className="flex items-center justify-center gap-2 w-full py-2.5 px-6 rounded-xl border hover:opacity-80 transition text-xs font-heading font-medium"
