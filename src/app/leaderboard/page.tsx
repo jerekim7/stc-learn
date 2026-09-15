@@ -40,7 +40,7 @@ export default function LeaderboardPage() {
           className="flex items-center gap-1.5 text-xs font-heading font-semibold hover:opacity-80 transition"
           style={{ color: goldAccent }}
         >
-          <ArrowLeft size={16} /> Back to Terminal
+          <ArrowLeft size={16} /> Back to Summary
         </Link>
 
         <div className="flex items-center gap-3">
