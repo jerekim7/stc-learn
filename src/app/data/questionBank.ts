@@ -165,3 +165,7 @@ export const QUESTION_BANK: Question[] = [
     explanation: "STC-IU's allocation is linked to the group's risk profile, not simply to chasing the highest possible return."
   }
 ];
+
+export function getDropByWeek(weekNumber: number): Question[] {
+  return QUESTION_BANK.filter((q) => q.dropWeek === weekNumber);
+}
