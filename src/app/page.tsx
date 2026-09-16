@@ -1,11 +1,36 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Quickfire from "./components/Quickfire";
 import { Contrast } from "lucide-react";
 
 export default function Home() {
   const [isDark, setIsDark] = useState(false);
+
+  // Restore saved theme on mount
+  useEffect(() => {
+    try {
+      const savedTheme = localStorage.getItem("stc_theme");
+      if (savedTheme) {
+        setIsDark(savedTheme === "dark");
+      }
+    } catch (e) {
+      console.error("Failed to read theme from localStorage", e);
+    }
+  }, []);
+
+  // Persist theme toggle
+  const toggleTheme = () => {
+    setIsDark((prev) => {
+      const nextMode = !prev;
+      try {
+        localStorage.setItem("stc_theme", nextMode ? "dark" : "light");
+      } catch (e) {
+        console.error("Failed to save theme to localStorage", e);
+      }
+      return nextMode;
+    });
+  };
 
   const cardBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(28,39,81,0.12)";
 
@@ -32,7 +57,7 @@ export default function Home() {
         <div className="flex items-center gap-3">
           {/* Theme Toggle */}
           <button
-            onClick={() => setIsDark(!isDark)}
+            onClick={toggleTheme}
             aria-label="Toggle visual theme"
             className="p-1.5 rounded-full hover:opacity-80 transition flex items-center justify-center opacity-75"
           >
