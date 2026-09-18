@@ -30,21 +30,21 @@ const GOOGLE_SHEET_ENDPOINT =
 
 // 13 STC-Chama seats + External Tester Seat
 const STC_MEMBERS = [
-  "Allan Mwiti",
-  "Asaph Kariuki",
-  "Carlos Mutua",
-  "Chris Gitau",
-  "Darren Tanui",
-  "Emmanuel Mbatia",
-  "Jeremy Kimingiri",
-  "Joshua Rebo",
-  "Kipleting Keino",
-  "Michael Kiprop",
-  "Michael Trevis",
-  "Ryan Ngetich",
-  "Sammy Kimaiyo",
+  "Seat 01 · A.M.",
+  "Seat 02 · A.K.",
+  "Seat 03 · C.M.",
+  "Seat 04 · C.G.",
+  "Seat 05 · D.T.",
+  "Seat 06 · E.M.",
+  "Seat 07 · J.K.",
+  "Seat 08 · J.R.",
+  "Seat 09 · K.K.",
+  "Seat 10 · M.K.",
+  "Seat 11 · M.T.",
+  "Seat 12 · R.N.",
+  "Seat 13 · S.K.",
   "Guest",
-  "Guest - GT"
+  "Guest · GT"
 ];
 
 interface StoredSession {
