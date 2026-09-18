@@ -43,7 +43,8 @@ const STC_MEMBERS = [
   "Michael Trevis",
   "Ryan Ngetich",
   "Sammy Kimaiyo",
-  "Guest"
+  "Guest",
+  "Guest - GT"
 ];
 
 interface StoredSession {
